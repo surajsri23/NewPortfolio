@@ -138,3 +138,54 @@ const skillsObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 skillsObserver.observe(document.querySelector('#skills'));
+
+
+
+function sendMail(event) {
+    event.preventDefault();
+
+    var params = {
+        from_name: document.getElementById("fullName").value,
+        email_id: document.getElementById("email").value,
+        message: document.getElementById("message").value
+    };
+
+    emailjs.send("service_ypb8u6e", "template_iyod3qf", params)
+        .then(function(response) {
+            console.log("Message sent successfully! Status: " + response.status);
+            document.getElementById("contactForm").reset();
+            alert("Message sent successfully!");
+            document.getElementById("successMessage").classList.remove("hidden");
+            setTimeout(() => {
+                document.getElementById("successMessage").classList.add("hidden");
+            }, 5000);
+        }, function(error) {
+            console.error("Failed to send message. Error: " + error);
+            alert("Failed to send message. Please try again.");
+            document.getElementById("errorMessage").classList.remove("hidden");
+            setTimeout(() => {
+                document.getElementById("errorMessage").classList.add("hidden");
+            }, 5000);
+        });
+}
+
+document.getElementById("contactForm").addEventListener("submit", sendMail);
+
+// Ensure the success and error message elements exist
+document.addEventListener("DOMContentLoaded", function() {
+    if (!document.getElementById("successMessage")) {
+        const successMessage = document.createElement("div");
+        successMessage.id = "successMessage";
+        successMessage.className = "hidden bg-green-500 text-white p-4 mb-4";
+        successMessage.textContent = "Message sent successfully!";
+        document.getElementById("contactForm").insertAdjacentElement('beforebegin', successMessage);
+    }
+
+    if (!document.getElementById("errorMessage")) {
+        const errorMessage = document.createElement("div");
+        errorMessage.id = "errorMessage";
+        errorMessage.className = "hidden bg-red-500 text-white p-4 mb-4";
+        errorMessage.textContent = "Failed to send message. Please try again.";
+        document.getElementById("contactForm").insertAdjacentElement('beforebegin', errorMessage);
+    }
+});
